@@ -4,6 +4,7 @@ import { useDropzone } from "react-dropzone";
 import { useCallback, useState } from "react";
 import { FileIcon, Loader2Icon, Upload, X, Download, Copy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 import { FileWithPreview } from "@/types/file";
 import { cn } from "@/lib/utils";
@@ -44,7 +45,7 @@ const compressImage = async (file: File): Promise<File> => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = (event) => {
-      const img = new Image();
+      const img = document.createElement('img') as HTMLImageElement;
       img.src = event.target?.result as string;
       img.onload = () => {
         const canvas = document.createElement('canvas');
@@ -80,10 +81,11 @@ const compressImage = async (file: File): Promise<File> => {
               resolve(file);
               return;
             }
-            resolve(new File([blob], file.name, {
+            const compressedFile = new File([blob], file.name, {
               type: 'image/jpeg',
               lastModified: Date.now(),
-            }));
+            });
+            resolve(compressedFile);
           },
           'image/jpeg',
           0.8
@@ -202,7 +204,7 @@ const FileUpload = ({
       setFiles(updatedFiles);
       onChange?.(updatedFiles);
     },
-    [files, maxFiles, onChange]
+    [files, maxFiles, onChange, maxSize]
   );
 
   const {
@@ -392,15 +394,17 @@ const FileUpload = ({
                   >
                     <div className="flex items-center flex-1 min-w-0">
                       {file.preview ? (
-                        <div className="relative size-10 overflow-hidden rounded">
-                          <img
+                        <div className="relative h-32 w-32">
+                          <Image
                             src={file.preview}
                             alt={file.file.name}
-                            className="object-cover w-full h-full"
+                            className="object-cover rounded-lg"
+                            fill
+                            sizes="(max-width: 128px) 100vw, 128px"
                           />
                         </div>
                       ) : (
-                        <FileIcon className="size-6 text-black" />
+                        <FileIcon className="size-10 text-gray-400" />
                       )}
                       <span className="ml-3 text-sm text-gray-700 truncate">
                         {file.file.name}

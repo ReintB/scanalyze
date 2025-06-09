@@ -13,8 +13,9 @@ const FileUploadContainer = () => {
     setFiles(newFiles);
   };
 
-  const handleRemove = (file: FileWithPreview) => {
-    toast;
+  const handleRemove = (fileToRemove: FileWithPreview) => {
+    setFiles(files.filter(file => file !== fileToRemove));
+    toast.success("File removed successfully");
   };
 
   return (
