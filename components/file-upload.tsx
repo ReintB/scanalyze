@@ -20,6 +20,7 @@ import {
 import { Button } from "./ui/button";
 import { getAiResult } from "@/actions/getAiResult";
 import { Progress } from "./ui/progress";
+import { toast } from "sonner";
 
 interface FileUploadProps {
   value?: FileWithPreview[];
@@ -308,6 +309,8 @@ const FileUpload = ({
                   className="hover:bg-gray-100"
                   onClick={() => {
                     navigator.clipboard.writeText(aiResult);
+                    toast.success("Copied to clipboard!", {
+                    })
                   }}
                 >
                   <Copy className="size-4" />
